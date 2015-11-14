@@ -1,6 +1,27 @@
+# Ignore everything
+*
+# but not these
+!.gitignore
+!*.sv
+!*.do
+
 Lab3/db/SingleCycle.db_info
 Lab3/db/SingleCycle.quiproj.17488.rdr.flock
 *.qpf
 Lab3/SingleCycle.qsf
 *.flock
 Lab3/db/SingleCycle.sld_design_entry.sci
+*.bak
+*.cdb
+Lab3/db/DE1_SoC.(0).cnf.hdb
+*.hdb
+*.xml
+Lab3/db/DE1_SoC.cmp.rdb
+*.db_info
+Lab3/db/DE1_SoC.hier_info
+*.hif
+Lab3/db/DE1_SoC.logic_util_heuristic.dat
+*.html
+Lab3/db/DE1_SoC.lpc.rdb
+
+!*/
