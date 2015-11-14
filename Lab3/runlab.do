@@ -25,16 +25,20 @@ vlog "./Adding32.sv"
 vlog "./Adder.sv"
 vlog "./Subtractor.sv"
 vlog "./SingleMux4_1.sv"
+vlog "./dataMem.sv"
+vlog "./InstructionMem.sv"
+vlog "./Adder30Bit.sv"
+vlog "./SignExtend32.sv"
 
 # Call vsim to invoke simulator
 #     Make sure the last item on the line is the name of the
 #     testbench module you want to execute.
-vsim -voptargs="+acc" -t 1ps -lib work ALUStimulus
+vsim -voptargs="+acc" -t 1ps -lib work SignExtend32_testbench
 
 # Source the wave do file
 #     This should be the file that sets up the signal window for
 #     the module you are testing.
-do alu_wave.do
+do SignExtend32_wave.do
 
 # Set the window types
 view wave
