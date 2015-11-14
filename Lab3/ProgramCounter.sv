@@ -1,3 +1,7 @@
+/*
+	Every clock cycle, writes input to output;
+*/
+
 module ProgramCounter (out, in, clk);
 	input[29:0] in;
 	input clk;
