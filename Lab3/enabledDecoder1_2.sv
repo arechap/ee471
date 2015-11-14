@@ -1,3 +1,5 @@
+`timescale 1 ps/100 fs
+
 module enabledDecoder1_2(out1, out0, sel, en);
 	output out1, out0;
 	input sel, en;

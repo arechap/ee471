@@ -1,4 +1,4 @@
-`timescale 1ps/100fs
+`timescale 1 ps/100 fs
 
 module Adding32(Reg1, Reg2, Sum, FirstCin, LastCout, Overflow);
 	input [30:0] Reg1, Reg2;
@@ -36,4 +36,3 @@ module Adding32_testbench();
         	Reg1=31'b10101010; Reg2=32'b1111111; FirstCin=1; #5000;   	   	 
  end     
 endmodule
-         

@@ -1,3 +1,5 @@
+`timescale 1ps/100fs
+
 module SingleMux2_1(out, i1, i0, sel);     
       output out;        
       input i1, i0, sel;       
