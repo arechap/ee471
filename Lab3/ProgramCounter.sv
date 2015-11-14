@@ -1,16 +1,21 @@
+`timescale 1 ps/100 fs
+
 /*
-	Every clock cycle, writes input to output;
+*	This module holds the number of the instruction
+*	we are currently doing. 
+*	Every clock cycle, writes input(next instruction) 
+*	to output(current instruction)
 */
 
-module ProgramCounter (out, in, clk);
+module ProgramCounter (out, in, reset, clk);
 	input[29:0] in;
-	input clk;
+	input reset, clk;
 	output[29:0] out;
 	
 	genvar i;
 	generate
 		for (i = 0; i < 30; i++) begin : eachFlipFlop
-			D_FF flipFlop (out[i], in[i], 1'b0, clk);
+			D_FF flipFlop (out[i], in[i], reset, clk);
 		end
 	endgenerate
 endmodule
@@ -19,7 +24,7 @@ module ProgramCounter_testbench();
 	parameter clockDelay = 5000;
 	
 	reg [29:0] in;
-	reg clk;
+	reg reset, clk;
 	wire [29:0] out;    
 	ProgramCounter dut (.out, .in, .clk);  
 
@@ -32,6 +37,7 @@ module ProgramCounter_testbench();
 	end
 	
 	initial begin
+		reset = 1'b0;
 		for (i = 0; i < 536870912; i = i + 100) begin
 			in = i; @(posedge clk);
 		end

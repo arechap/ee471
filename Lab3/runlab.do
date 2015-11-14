@@ -30,16 +30,17 @@ vlog "./InstructionMem.sv"
 vlog "./Adder30Bit.sv"
 vlog "./SignExtend32.sv"
 vlog "./ProgramCounter.sv"
+vlog "./InstructionFetchUnit.sv"
 
 # Call vsim to invoke simulator
 #     Make sure the last item on the line is the name of the
 #     testbench module you want to execute.
-vsim -voptargs="+acc" -t 1ps -lib work ProgramCounter_testbench
+vsim -voptargs="+acc" -t 1ps -lib work InstructionFetchUnit_testbench
 
 # Source the wave do file
 #     This should be the file that sets up the signal window for
 #     the module you are testing.
-do ProgramCounter_wave.do
+do InstructionFetchUnit_wave.do
 
 # Set the window types
 view wave
