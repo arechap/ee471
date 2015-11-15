@@ -8,7 +8,7 @@ module Mux8_1 (out, in, sel);
 	Mux4_1 top4 (outTop4, in[7:4], sel[1:0]);
 	Mux4_1 bottom4 (outBottom4, in[3:0], sel[1:0]);
 	
-	mux2_1 finish (out, outTop4,outBottom4, sel[2]);
+	Mux2_1 finish (out, outTop4,outBottom4, sel[2]);
 
 endmodule
 

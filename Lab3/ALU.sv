@@ -1,6 +1,6 @@
 `timescale 1 ps/100 fs
 
-module alu (Output, CarryOut, zero, overflow, negative, BussA, BussB, ALUControl);
+module ALU (Output, CarryOut, zero, overflow, negative, BussA, BussB, ALUControl);
 	output [31:0] Output;
 	output zero, overflow, CarryOut, negative;
 	input [31:0] BussA, BussB;
@@ -66,7 +66,7 @@ module ALUStimulus();
 	// have to change the following line in order to create an instance of
 	// your register file.  Also you must make sure that the port declarations
 	// match up with the module instance in this stimulus file.
-	alu alu1(Output, CarryOut, zero, overflow, negative, BussA, BussB, ALUControl);
+	ALU alu1(Output, CarryOut, zero, overflow, negative, BussA, BussB, ALUControl);
 
 	initial begin
 

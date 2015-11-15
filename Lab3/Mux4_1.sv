@@ -5,9 +5,9 @@ module Mux4_1(out, in, sel);
 	
 	wire [31:0] outMuxTop, outMuxBottom;
 	
-	mux2_1 top (outMuxTop, in[3], in[2], sel[0]);
-	mux2_1 bottom (outMuxBottom, in[1], in[0], sel[0]);
-	mux2_1 last (out, outMuxTop, outMuxBottom, sel[1]);
+	Mux2_1 top (outMuxTop, in[3], in[2], sel[0]);
+	Mux2_1 bottom (outMuxBottom, in[1], in[0], sel[0]);
+	Mux2_1 last (out, outMuxTop, outMuxBottom, sel[1]);
 
 endmodule
 

@@ -15,10 +15,10 @@ module SignExtend30 (out, in);
 endmodule
 
 
-module SignExtend32_testbench();
+module SignExtend30_testbench();
 	reg [15:0] in;   
 	wire [29:0] out;    
-	SignExtend32 dut (.out, .in);   
+	SignExtend30 dut (.out, .in);   
 	initial begin
 		in = 16'h0000; #5000;
 		in = 16'h0001; #5000;
