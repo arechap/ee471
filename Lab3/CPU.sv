@@ -30,8 +30,7 @@ module CPU(reset, clk);
 	assign target = instruction[25:0];
 	
 	// RegFile
-	Mux2_1 m0 (writeAddress, Rt, Rd, cRegDst);
-	
+	Mux5Bit2_1 m0 (writeAddress, Rt, Rd, cRegDst);
 	regfile RF (RegDataA, RegDataB, RegDataIn, Rs, Rt, writeAddress, cRegWr, clk);
 	
 	// ALU
@@ -49,6 +48,54 @@ module CPU(reset, clk);
 	
 	always @ (*) begin
 		case (op)
+		
+			RTYPE: begin
+				case (func)
+					SUBU: begin
+						cRegDst = 1'b0;
+						cRegWr = 1'b1;
+						cALUSrc = 1'b0;
+						cALUCtrl = ALUsub;
+						cMemWr = 1'b0;
+						cMemToReg = 1'b0;
+						cBranch = 1'b0;
+						cJump = 1'b0;	
+					end
+					
+					NOR: begin
+						cRegDst = 1'b0;
+						cRegWr = 1'b1;
+						cALUSrc = 1'b0;
+						cALUCtrl = ALUnor;
+						cMemWr = 1'b0;
+						cMemToReg = 1'b0;
+						cBranch = 1'b0;
+						cJump = 1'b0;	
+					end
+					
+					SLTU: begin
+						cRegDst = 1'b0;
+						cRegWr = 1'b1;
+						cALUSrc = 1'b0;
+						cALUCtrl = ALUsltu;
+						cMemWr = 1'b0;
+						cMemToReg = 1'b0;
+						cBranch = 1'b0;
+						cJump = 1'b0;	
+					end
+					
+					default: begin
+						cRegDst = 1'b0;
+						cRegWr = 1'b0;
+						cALUSrc = 1'b0;
+						cALUCtrl = ALUadd;
+						cMemWr = 1'b0;
+						cMemToReg = 1'b0;
+						cBranch = 1'b0;
+						cJump = 1'b0;	
+					end
+				endcase
+			end
 			
 			ADDI: begin
 				cRegDst = 1'b1;
@@ -59,6 +106,50 @@ module CPU(reset, clk);
 				cMemToReg = 1'b0;
 				cBranch = 1'b0;
 				cJump = 1'b0;	
+			end
+			
+			LW: begin
+				cRegDst = 1'b1;
+				cRegWr = 1'b1;
+				cALUSrc = 1'b1;
+				cALUCtrl = ALUadd;
+				cMemWr = 1'b0;
+				cMemToReg = 1'b1;
+				cBranch = 1'b0;
+				cJump = 1'b0;	
+			end
+			
+			SW: begin
+				cRegDst = 1'bx;
+				cRegWr = 1'b0;
+				cALUSrc = 1'b1;
+				cALUCtrl = ALUadd;
+				cMemWr = 1'b1;
+				cMemToReg = 1'bx;
+				cBranch = 1'b0;
+				cJump = 1'b0;	
+			end
+			
+			BLTZ: begin
+				cRegDst = 1'bx;
+				cRegWr = 1'b0;
+				cALUSrc = 1'bx;
+				cALUCtrl = ALUadd;
+				cMemWr = 1'b0;
+				cMemToReg = 1'bx;
+				cBranch = 1'b1;
+				cJump = 1'b0;	
+			end
+			
+			J: begin
+				cRegDst = 1'bx;
+				cRegWr = 1'b0;
+				cALUSrc = 1'bx;
+				cALUCtrl = ALUadd;
+				cMemWr = 1'b0;
+				cMemToReg = 1'bx;
+				cBranch = 1'b0;
+				cJump = 1'b1;	
 			end
 			
 			default: begin
