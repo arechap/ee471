@@ -1,14 +1,16 @@
+`timescale 1 ps/100 fs
+
 module CPU(reset, clk);
 	
 	input reset, clk;
 	
 	
-	parameter [5:0] ADDI = 6'b001000, SUBU = 6'b100011, NOR = 6'b100111, SLTU = 6'b101011, LW = 6'b100011, SW = 6'b101011, BLTZ = 6'b000001, J = 6'b000010, RTYPE = 6'b000000;
+	parameter [5:0] ADDI = 6'b001000, SUBU = 6'b100011, NOR = 6'b100111, SLTU = 6'b101011, LW = 6'b100011, SW = 6'b101011, BLTZ = 6'b000001, J = 6'b000010, JR = 6'b001000, RTYPE = 6'b000000;
 	parameter [1:0] ALUadd = 2'b00, ALUsub = 2'b01, ALUnor = 2'b10, ALUsltu = 2'b11;
 	
 	// control signals
-	wire cRegWr, cRegDst, cALUSrc, cMemWr, cMemToReg, cBranch, cJump;
-	wire [1:0] cALUCtrl;
+	reg cRegWr, cRegDst, cALUSrc, cMemWr, cMemToReg, cBranch, cJump, cJumpReg;
+	reg [1:0] cALUCtrl;
 	
 	// data signals
 	wire carryOut, overFlow, zero, negative;
@@ -21,7 +23,7 @@ module CPU(reset, clk);
 	wire [5:0] op, func;
 	
 	// instruction fetch
-	InstructionFetchUnit IFU (instruction, imm16, target, cBranch, cJump, RegDataA[31], reset, clk);
+	InstructionFetchUnit IFU (instruction, imm16, target, RegDataA, cBranch, cJump, cJumpReg, RegDataA[31], reset, clk);
 	
 	assign Rs = instruction[25:21];
 	assign Rt = instruction[20:16];
@@ -59,7 +61,8 @@ module CPU(reset, clk);
 						cMemWr = 1'b0;
 						cMemToReg = 1'b0;
 						cBranch = 1'b0;
-						cJump = 1'b0;	
+						cJump = 1'b0;
+						cJumpReg = 1'b0;
 					end
 					
 					NOR: begin
@@ -70,7 +73,8 @@ module CPU(reset, clk);
 						cMemWr = 1'b0;
 						cMemToReg = 1'b0;
 						cBranch = 1'b0;
-						cJump = 1'b0;	
+						cJump = 1'b0;
+						cJumpReg = 1'b0;
 					end
 					
 					SLTU: begin
@@ -81,7 +85,20 @@ module CPU(reset, clk);
 						cMemWr = 1'b0;
 						cMemToReg = 1'b0;
 						cBranch = 1'b0;
-						cJump = 1'b0;	
+						cJump = 1'b0;
+						cJumpReg = 1'b0;
+					end
+
+					JR: begin
+						cRegDst = 1'b0;
+						cRegWr = 1'b0;
+						cALUSrc = 1'b0;
+						cALUCtrl = ALUadd;
+						cMemWr = 1'b0;
+						cMemToReg = 1'b0;
+						cBranch = 1'b0;
+						cJump = 1'b0;
+						cJumpReg = 1'b1;
 					end
 					
 					default: begin
@@ -92,7 +109,8 @@ module CPU(reset, clk);
 						cMemWr = 1'b0;
 						cMemToReg = 1'b0;
 						cBranch = 1'b0;
-						cJump = 1'b0;	
+						cJump = 1'b0;
+						cJumpReg = 1'b0;
 					end
 				endcase
 			end
@@ -105,7 +123,8 @@ module CPU(reset, clk);
 				cMemWr = 1'b0;
 				cMemToReg = 1'b0;
 				cBranch = 1'b0;
-				cJump = 1'b0;	
+				cJump = 1'b0;
+				cJumpReg = 1'b0;
 			end
 			
 			LW: begin
@@ -116,7 +135,8 @@ module CPU(reset, clk);
 				cMemWr = 1'b0;
 				cMemToReg = 1'b1;
 				cBranch = 1'b0;
-				cJump = 1'b0;	
+				cJump = 1'b0;
+				cJumpReg = 1'b0;
 			end
 			
 			SW: begin
@@ -127,7 +147,8 @@ module CPU(reset, clk);
 				cMemWr = 1'b1;
 				cMemToReg = 1'bx;
 				cBranch = 1'b0;
-				cJump = 1'b0;	
+				cJump = 1'b0;
+				cJumpReg = 1'b0;
 			end
 			
 			BLTZ: begin
@@ -138,7 +159,8 @@ module CPU(reset, clk);
 				cMemWr = 1'b0;
 				cMemToReg = 1'bx;
 				cBranch = 1'b1;
-				cJump = 1'b0;	
+				cJump = 1'b0;
+				cJumpReg = 1'b0;
 			end
 			
 			J: begin
@@ -149,7 +171,8 @@ module CPU(reset, clk);
 				cMemWr = 1'b0;
 				cMemToReg = 1'bx;
 				cBranch = 1'b0;
-				cJump = 1'b1;	
+				cJump = 1'b1;
+				cJumpReg = 1'b0;
 			end
 			
 			default: begin
@@ -160,7 +183,8 @@ module CPU(reset, clk);
 				cMemWr = 1'b0;
 				cMemToReg = 1'b0;
 				cBranch = 1'b0;
-				cJump = 1'b0;	
+				cJump = 1'b0;
+				cJumpReg = 1'b0;
 			end
 		
 		endcase
@@ -169,7 +193,7 @@ module CPU(reset, clk);
 endmodule
 
 module CPU_testbench();
-	parameter clockDelay = 5000;
+	parameter clockDelay = 100000;
 	
 	reg reset, clk;
     
@@ -188,7 +212,7 @@ module CPU_testbench();
 		reset = 1'b1; @(posedge clk);
 		reset = 1'b0; @(posedge clk);
 
-		#(clockDelay*10)
+		#(clockDelay*1000)
 		
 		$stop;
 	end  

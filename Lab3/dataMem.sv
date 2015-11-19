@@ -1,3 +1,5 @@
+`timescale 1 ps/100 fs
+
 // Data Memory module
 module dataMem(data, address, writedata, writeenable, clk);
 	input [31:0] address, writedata;

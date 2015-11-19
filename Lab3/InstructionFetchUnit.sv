@@ -1,13 +1,14 @@
 `timescale 1 ps/100 fs
 
-module InstructionFetchUnit (instruction, imm16, target, branch, jump, LTZ, reset, clk);
+module InstructionFetchUnit (instruction, imm16, target, regData, branch, jump, jumpReg, LTZ, reset, clk);
 	output [31:0] instruction;
 	
 	input [15:0] imm16;
 	input [25:0] target;
-	input branch, jump, LTZ, reset, clk;
+	input [31:0] regData;
+	input branch, jump, jumpReg, LTZ, reset, clk;
 	
-	wire [29:0] programCount, newPC, jumpTarget, sum, delta, imm30;
+	wire [29:0] programCount, newPC, increment, jumpTarget, sum, delta, imm30;
 	wire branchControl, carryOut, overflow;
 	
 	ProgramCounter PC (programCount, newPC, reset, clk);
@@ -23,7 +24,10 @@ module InstructionFetchUnit (instruction, imm16, target, branch, jump, LTZ, rese
 	
 	// jump logic
 	assign jumpTarget = {programCount[29:26], target};
-	Mux30Bit2_1 m1 (newPC, jumpTarget, sum, jump);
+	Mux30Bit2_1 m1 (increment, jumpTarget, sum, jump);
+	
+	// jump register logic
+	Mux30Bit2_1 m2 (newPC, regData[31:2], increment, jumpReg);
 	
 	// instuctions
 	InstructionMem IM (instruction, {programCount, 2'b0});

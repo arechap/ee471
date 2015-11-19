@@ -1,3 +1,5 @@
+`timescale 1 ps/100 fs
+
 /* Instruction memory module.  Change the $readmemb line to have the name of the program you want to load */
 module InstructionMem(instruction, address);
 	input [31:0] address;
@@ -43,7 +45,7 @@ module InstructionMem(instruction, address);
 	end
 
 	initial begin
-		$readmemb("test01.out", instrmem);
+		$readmemb("test09.out", instrmem);
 	end
 endmodule
 
