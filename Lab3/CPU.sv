@@ -167,3 +167,29 @@ module CPU(reset, clk);
 	end
 	
 endmodule
+
+module CPU_testbench();
+	parameter clockDelay = 5000;
+	
+	reg reset, clk;
+    
+	CPU dut (.reset, .clk);  
+
+	integer i;
+	
+	initial clk = 0;
+	always begin
+		#(clockDelay / 2);
+		clk = ~clk;
+	end
+	
+	initial begin
+		reset = 1'b0; @(posedge clk);
+		reset = 1'b1; @(posedge clk);
+		reset = 1'b0; @(posedge clk);
+
+		#(clockDelay*10)
+		
+		$stop;
+	end  
+endmodule 

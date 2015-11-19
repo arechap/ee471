@@ -26,8 +26,8 @@ module InstructionFetchUnit (instruction, imm16, target, branch, jump, LTZ, rese
 	Mux30Bit2_1 m1 (newPC, jumpTarget, sum, jump);
 	
 	// instuctions
-	//InstructionMem IM (instruction, {programCount, 2'b0});
-	assign instruction = {programCount, 2'b0};
+	InstructionMem IM (instruction, {programCount, 2'b0});
+	//assign instruction = {programCount, 2'b0};
 
 endmodule
 

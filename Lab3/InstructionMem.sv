@@ -43,7 +43,7 @@ module InstructionMem(instruction, address);
 	end
 
 	initial begin
-		$readmemb("instr.dat", instrmem);
+		$readmemb("test01.out", instrmem);
 	end
 endmodule
 
