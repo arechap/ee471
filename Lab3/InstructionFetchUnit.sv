@@ -1,5 +1,10 @@
 `timescale 1 ps/100 fs
 
+/*
+*	This module handles all the control logic dealing with the program counter.
+*	So jumps and branch control is implemented here, then the PC is sent to the
+*	Instruction memory
+*/
 module InstructionFetchUnit (instruction, imm16, target, regData, branch, jump, jumpReg, LTZ, reset, clk);
 	output [31:0] instruction;
 	
@@ -8,9 +13,11 @@ module InstructionFetchUnit (instruction, imm16, target, regData, branch, jump, 
 	input [31:0] regData;
 	input branch, jump, jumpReg, LTZ, reset, clk;
 	
+	// data buses
 	wire [29:0] programCount, newPC, increment, jumpTarget, sum, delta, imm30;
 	wire branchControl, carryOut, overflow;
 	
+	// flip flops that hold the program counter
 	ProgramCounter PC (programCount, newPC, reset, clk);
 	
 	// branch logic	
@@ -20,6 +27,8 @@ module InstructionFetchUnit (instruction, imm16, target, regData, branch, jump, 
 	Mux30Bit2_1 m0 (delta, imm30, 30'b0, branchControl);
 	
 	// program counter update logic
+	// carryOut and overflow are not used in this module, but
+	// come out of the adder anyways
 	Adder30Bit adder0 (programCount, delta, sum, 1'b1, carryOut, overflow);
 	
 	// jump logic
@@ -31,7 +40,6 @@ module InstructionFetchUnit (instruction, imm16, target, regData, branch, jump, 
 	
 	// instuctions
 	InstructionMem IM (instruction, {programCount, 2'b0});
-	//assign instruction = {programCount, 2'b0};
 
 endmodule
 

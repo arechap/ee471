@@ -1,9 +1,15 @@
 `timescale 1 ps/100 fs
 
+/*
+*	This is the top-level module for a single-cycle MIPS CPU.
+*	Most of the data path is in this file (aside from the Instruction Fetch Unit)
+*	as well behavioral logic describing how the control signals should be
+*	set for each instruction
+*/
+
 module CPU(reset, clk);
 	
 	input reset, clk;
-	
 	
 	parameter [5:0] ADDI = 6'b001000, SUBU = 6'b100011, NOR = 6'b100111, SLTU = 6'b101011, LW = 6'b100011, SW = 6'b101011, BLTZ = 6'b000001, J = 6'b000010, JR = 6'b001000, RTYPE = 6'b000000;
 	parameter [1:0] ALUadd = 2'b00, ALUsub = 2'b01, ALUnor = 2'b10, ALUsltu = 2'b11;
@@ -25,6 +31,7 @@ module CPU(reset, clk);
 	// instruction fetch
 	InstructionFetchUnit IFU (instruction, imm16, target, RegDataA, cBranch, cJump, cJumpReg, RegDataA[31], reset, clk);
 	
+	// instruction components
 	assign Rs = instruction[25:21];
 	assign Rt = instruction[20:16];
 	assign Rd = instruction[15:11];
@@ -51,6 +58,8 @@ module CPU(reset, clk);
 	always @ (*) begin
 		case (op)
 		
+			// All these have an op of 0,
+			// differentiated by func
 			RTYPE: begin
 				case (func)
 					SUBU: begin
