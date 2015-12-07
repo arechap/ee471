@@ -13,10 +13,12 @@ module Pipelined_CPU(reset, clk);
 	wire [15:0] imm160;
 	wire [25:0] target0, target1, target2, target3, target4;
 	wire [31:0] instruction, ALUArg2, ALUResult, ALUResult3, ALUResult4, MemDataOut, RegDataIn, RegDataIn4;
+	wire [31:0] movingOnDataA, movingOnDataB, forwardedDataA, forwardedDataB;
 	wire [31:0] DataA, DataB, DataA1, DataB1, DataA2, DataB2, DataA3, DataB3, DataA4, DataB4;
 	wire [31:0] imm0, imm1, imm2, imm3, imm4;
 	wire [5:0] op0, func0, op1, func1, op2, func2, op3, func3, op4, func4;
 	wire [9:0] ctrl0, ctrl1, ctrl2, ctrl3, ctrl4;
+	wire AForwardALU, BForwardALU, ForwardA, ForwardB;
 
 /*
 *
@@ -25,7 +27,7 @@ module Pipelined_CPU(reset, clk);
 *
 */	
 	// Instruction Fetch Module
-	InstructionFetchUnit IFU (instruction, imm1[29:0], target1, DataA, ctrl1[7], ctrl1[8], ctrl1[9], DataA[31], reset, clk);
+	InstructionFetchUnit IFU (instruction, imm1[29:0], target1, movingOnDataA, ctrl1[7], ctrl1[8], ctrl1[9], movingOnDataA[31], reset, clk);
 	
 	// determine instruction components
 	assign Rs0 = instruction[25:21];
@@ -40,7 +42,7 @@ module Pipelined_CPU(reset, clk);
 	SignExtend32 SE (imm0, imm160);
 	
 	//Control logic module
-	DataPathControlLogic ctrlSet(op0, op1, ctrl0);
+	DataPathControlLogic ctrlSet(op0, func0, ctrl0);
 	
 	Register5_bit RegRs0 (Rs0, Rs1, 1'b1, reset, clk);
 	Register5_bit RegRt0 (Rt0, Rt1, 1'b1, reset, clk);
@@ -60,13 +62,21 @@ module Pipelined_CPU(reset, clk);
 	//Register File
 	regfile RF (DataA, DataB, RegDataIn4, Rs1, Rt1, RegWriteAddress, ctrl4[6], clk);
 	
+	ForwardingUnit FU0(ForwardA, ForwardB, AForwardALU, BForwardALU, op1, func1, Rs1, Rt1, op2, func2, Rt2, Rd2, op3, func3, Rt3, Rd3);
+	
+	Mux2_1 forwardedValueA (forwardedDataA, ALUResult, RegDataIn, AForwardALU);
+	Mux2_1 choseAorForward (movingOnDataA, forwardedDataA, DataA, ForwardA);
+	
+	Mux2_1 forwardedValueB (forwardedDataB, ALUResult, RegDataIn, BForwardALU);
+	Mux2_1 choseBorForward (movingOnDataB, forwardedDataB, DataB, ForwardB);
+	
 	Register5_bit RegRs1 (Rs1, Rs2, 1'b1, reset, clk);
 	Register5_bit RegRt1 (Rt1, Rt2, 1'b1, reset, clk);
 	Register5_bit RegRd1 (Rd1, Rd2, 1'b1, reset, clk);
 	Register32_bit RegImm1 (imm1, imm2, 1'b1, reset, clk);
 	Register26_bit RegTarget1 (target1, target2, 1'b1, reset, clk);
-	Register32_bit RegDataA1 (DataA, DataA2, 1'b1, reset, clk);
-	Register32_bit RegDataB1 (DataB, DataB2, 1'b1, reset, clk);
+	Register32_bit RegDataA1 (movingOnDataA, DataA2, 1'b1, reset, clk);
+	Register32_bit RegDataB1 (movingOnDataB, DataB2, 1'b1, reset, clk);
 	Register6_bit RegOp1 (op1, op2, 1'b1, reset, clk);
 	Register6_bit RegFunc1 (func1, func2, 1'b1, reset, clk);
 	Register10_bit RegCtrl1 (ctrl1, ctrl2, 1'b1, reset, clk);
@@ -105,7 +115,7 @@ module Pipelined_CPU(reset, clk);
 	dataMem DM (MemDataOut, ALUResult3, DataB3, ctrl3[3], clk);
 	
 	// Mux selecting if data from memory or data from ALU is written back to Register File
-	Mux2_1 m2 (RegDataIn, MemDataOut, ALUResult3, ctrl3[4]);
+	Mux2_1 m4 (RegDataIn, MemDataOut, ALUResult3, ctrl3[4]);
 	
 	Register5_bit RegRs3 (Rs3, Rs4, 1'b1, reset, clk);
 	Register5_bit RegRt3 (Rt3, Rt4, 1'b1, reset, clk);
@@ -130,3 +140,29 @@ module Pipelined_CPU(reset, clk);
 	Mux5Bit2_1 m0 (RegWriteAddress, Rt4, Rd4, ctrl4[5]);
 	
 endmodule
+
+module Pipelined_CPU_testbench();
+	parameter clockDelay = 100000;
+	
+	reg reset, clk;
+    
+	Pipelined_CPU dut (.reset, .clk);  
+
+	integer i;
+	
+	initial clk = 0;
+	always begin
+		#(clockDelay / 2);
+		clk = ~clk;
+	end
+	
+	initial begin
+		reset = 1'b0; @(posedge clk);
+		reset = 1'b1; @(posedge clk);
+		reset = 1'b0; @(posedge clk);
+
+		#(clockDelay*1000)
+		
+		$stop;
+	end  
+endmodule 

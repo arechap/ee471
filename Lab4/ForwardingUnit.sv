@@ -1,5 +1,5 @@
 module ForwardingUnit (forwardA, forwardB, AforwardALU, BforwardALU, op1, func1, Rs1, Rt1, op2, func2, Rt2, Rd2, op3, func3, Rt3, Rd3);
-	output forwardA, forwardB, AforwardALU, BforwardALU;
+	output reg forwardA, forwardB, AforwardALU, BforwardALU;
 	
 	input [5:0] op1, op2, op3, func1, func2, func3;
 	input [4:0] Rs1, Rt1, Rt2, Rd2, Rt3, Rd3;

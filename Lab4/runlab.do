@@ -4,6 +4,8 @@ vlib work
 # Compile Verilog
 #     All Verilog files that are part of this design should have
 #     their own "vlog" line below.
+vlog "./NegCLKD_FF.sv"
+vlog "./NegCLKEnabledDFF.sv"
 vlog "./regfile.sv"
 vlog "./mux2_1.sv"
 vlog "./enabledDecoder1_2.sv"
@@ -33,17 +35,20 @@ vlog "./ProgramCounter.sv"
 vlog "./InstructionFetchUnit.sv"
 vlog "./Mux5Bit2_1.sv"
 vlog "./Mux30Bit2_1.sv"
-vlog "./CPU.sv"
+vlog "./DataPathControlLogic.sv"
+vlog "./PipelineRegisters.sv"
+vlog "./ForwardingUnit.sv"
+vlog "./Pipelined_CPU.sv"
 
 # Call vsim to invoke simulator
 #     Make sure the last item on the line is the name of the
 #     testbench module you want to execute.
-vsim -voptargs="+acc" -t 1ps -lib work CPU_testbench
+vsim -voptargs="+acc" -t 1ps -lib work Pipelined_CPU_testbench
 
 # Source the wave do file
 #     This should be the file that sets up the signal window for
 #     the module you are testing.
-do CPU_wave.do
+do Pipelined_CPU_wave.do
 
 # Set the window types
 view wave
