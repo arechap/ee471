@@ -5,26 +5,25 @@
 *	So jumps and branch control is implemented here, then the PC is sent to the
 *	Instruction memory
 */
-module InstructionFetchUnit (instruction, imm16, target, regData, branch, jump, jumpReg, LTZ, reset, clk);
+module InstructionFetchUnit (instruction, imm1, target, regData, branch, jump, jumpReg, LTZ, reset, clk);
 	output [31:0] instruction;
 	
-	input [15:0] imm16;
+	input [29:0] imm1;
 	input [25:0] target;
 	input [31:0] regData;
 	input branch, jump, jumpReg, LTZ, reset, clk;
 	
 	// data buses
-	wire [29:0] programCount, newPC, increment, jumpTarget, sum, delta, imm30;
+	wire [29:0] programCount, newPC, increment, jumpTarget, sum, delta;
 	wire branchControl, carryOut, overflow;
 	
 	// flip flops that hold the program counter
 	ProgramCounter PC (programCount, newPC, reset, clk);
 	
 	// branch logic	
-	SignExtend30 se30 (imm30, imm16);
-	
+
 	and #50 a0 (branchControl, branch, LTZ);
-	Mux30Bit2_1 m0 (delta, imm30, 30'b0, branchControl);
+	Mux30Bit2_1 m0 (delta, imm1, 30'b0, branchControl);
 	
 	// program counter update logic
 	// carryOut and overflow are not used in this module, but
@@ -46,12 +45,12 @@ endmodule
 module InstructionFetchUnit_testbench();
 	parameter clockDelay = 5000;
 	
-	reg [15:0] imm16;
+	reg [29:0] imm1;
 	reg [25:0] target;
 	reg branch, jump, LTZ, reset, clk;
 	
 	wire [31:0] instruction;    
-	InstructionFetchUnit dut (.instruction, .imm16, .target, .branch, .jump, .LTZ, .reset, .clk);  
+	InstructionFetchUnit dut (.instruction, .imm1, .target, .branch, .jump, .LTZ, .reset, .clk);  
 
 	integer i;
 	
@@ -62,7 +61,7 @@ module InstructionFetchUnit_testbench();
 	end
 	
 	initial begin
-		imm16 = 16'h0000;
+		imm1 = 29'h0000;
 		target = 26'b0;
 		branch = 1'b0;
 		jump = 1'b0;
@@ -75,7 +74,7 @@ module InstructionFetchUnit_testbench();
 		@(posedge clk);
 		@(posedge clk);
 		@(posedge clk);
-		imm16 = 16'h0005; branch = 1'b1; @(posedge clk);
+		imm1 = 29'h0005; branch = 1'b1; @(posedge clk);
 		LTZ = 1'b1; @(posedge clk);
 		branch = 1'b0; @(posedge clk);
 		@(posedge clk);

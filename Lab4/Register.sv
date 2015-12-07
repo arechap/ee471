@@ -13,5 +13,4 @@ module Register (dataIn, dataOut, enable, reset, clk);
 		end
 	endgenerate
 
-
 endmodule

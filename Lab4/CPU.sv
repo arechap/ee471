@@ -38,6 +38,7 @@ module CPU(reset, clk);
 	assign imm16 = instruction[15:0];
 	assign target = instruction[25:0];
 	
+	
 	// RegFile
 	Mux5Bit2_1 m0 (writeAddress, Rt, Rd, cRegDst);
 	regfile RF (RegDataA, RegDataB, RegDataIn, Rs, Rt, writeAddress, cRegWr, clk);
