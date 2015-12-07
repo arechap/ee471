@@ -60,7 +60,7 @@ module Pipelined_CPU(reset, clk);
 *
 */	
 	//Register File
-	regfile RF (DataA, DataB, RegDataIn4, Rs1, Rt1, RegWriteAddress, ctrl4[6], clk);
+	regfile RF (DataA, DataB, RegDataIn4, Rs1, Rt1, RegWriteAddress, ctrl4[6], ~clk);
 	
 	ForwardingUnit FU0(ForwardA, ForwardB, AForwardALU, BForwardALU, op1, func1, Rs1, Rt1, op2, func2, Rt2, Rd2, op3, func3, Rt3, Rd3);
 	

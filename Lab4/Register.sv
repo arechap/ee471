@@ -9,7 +9,7 @@ module Register (dataIn, dataOut, enable, reset, clk);
 	
 	generate
 		for(i=0; i<32; i=i+1) begin: DFFs
-			NegCLKEnabledDFF U (enable, reset, clk, dataIn[i], dataOut[i]);
+			EnabledDFF U (enable, reset, clk, dataIn[i], dataOut[i]);
 		end
 	endgenerate
 

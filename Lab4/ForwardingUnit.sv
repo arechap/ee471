@@ -14,7 +14,7 @@ module ForwardingUnit (forwardA, forwardB, AforwardALU, BforwardALU, op1, func1,
 			// no forwarding to Data A if Rs1 is ZERO
 			if (Rs1 == 5'b0) begin
 				forwardA = 1'b0;
-				AforwardALU = 1'bx;
+				AforwardALU = 1'b0;
 				
 			// if stage 2 modifies Rs, forward from Stage 2 (the ALU) to Data A	
 			end else if (((Rs1 == Rt2)&&(op2 == ADDI)) ||
@@ -31,7 +31,7 @@ module ForwardingUnit (forwardA, forwardB, AforwardALU, BforwardALU, op1, func1,
 			// otherwise, no forwarding to Data A
 			end else begin
 				forwardA = 1'b0;
-				AforwardALU = 1'bx;
+				AforwardALU = 1'b0;
 			end
 			
 			// Data B forwarding Logic
@@ -42,7 +42,7 @@ module ForwardingUnit (forwardA, forwardB, AforwardALU, BforwardALU, op1, func1,
 				// no forwarding to Data B if Rt1 is ZERO
 				if (Rt1 == 5'b0) begin
 					forwardB = 1'b0;
-					BforwardALU = 1'bx;
+					BforwardALU = 1'b0;
 					
 				// if stage 2 modifies Rt, forward from Stage 2 (the ALU) to Data B	
 				end else if (((Rt1 == Rt2)&&(op2 == ADDI)) ||
@@ -59,12 +59,12 @@ module ForwardingUnit (forwardA, forwardB, AforwardALU, BforwardALU, op1, func1,
 				// otherwise, no forwarding to Data B
 				end else begin
 					forwardB = 1'b0;
-					BforwardALU = 1'bx;
+					BforwardALU = 1'b0;
 				end
 			
 			end else begin
 				forwardB = 1'b0;
-				BforwardALU = 1'bx;
+				BforwardALU = 1'b0;
 			end
 			
 		end else begin

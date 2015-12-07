@@ -128,7 +128,7 @@ module DataPathControlLogic (op, func, ctrl);
 				//cBranch = 1'b0;
 				//cJump = 1'b0;
 				//cJumpReg = 1'b0;
-				ctrl = 10'b0000x01001;
+				ctrl = 10'b0000001001;
 			end
 			
 			BLTZ: begin
@@ -141,7 +141,7 @@ module DataPathControlLogic (op, func, ctrl);
 				//cBranch = 1'b1;
 				//cJump = 1'b0;
 				//cJumpReg = 1'b0;
-				ctrl = 10'b0010x0000x;				
+				ctrl = 10'b0010000000;				
 			end
 			
 			J: begin
@@ -154,7 +154,7 @@ module DataPathControlLogic (op, func, ctrl);
 				//cBranch = 1'b0;
 				//cJump = 1'b1;
 				//cJumpReg = 1'b0;
-				ctrl = 10'b0100x0000x;
+				ctrl = 10'b0100000000;
 			end
 			
 			default: begin

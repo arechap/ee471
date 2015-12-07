@@ -16,6 +16,7 @@ module InstructionFetchUnit (instruction, imm1, target, regData, branch, jump, j
 	// data buses
 	wire [29:0] programCount, newPC, increment, jumpTarget, sum, delta;
 	wire branchControl, carryOut, overflow;
+	wire carryIn;
 	
 	// flip flops that hold the program counter
 	ProgramCounter PC (programCount, newPC, reset, clk);
@@ -28,7 +29,8 @@ module InstructionFetchUnit (instruction, imm1, target, regData, branch, jump, j
 	// program counter update logic
 	// carryOut and overflow are not used in this module, but
 	// come out of the adder anyways
-	Adder30Bit adder0 (programCount, delta, sum, 1'b1, carryOut, overflow);
+	and #50 a1 (carryIn, 1'b1, ~branchControl);
+	Adder30Bit adder0 (programCount, delta, sum, carryIn, carryOut, overflow);
 	
 	// jump logic
 	assign jumpTarget = {programCount[29:26], target};
